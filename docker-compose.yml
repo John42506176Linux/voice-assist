@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    volumes:
+      - ./app:/app
+      - ./data:/data
+    environment:
+      - DB_PATH=/data/transcriptions.db
+    command: uvicorn app:app --host 0.0.0.0 --port 80 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./app:/app
+      - ./data:/data
+    environment:
+      - DB_PATH=/data/transcriptions.db
+    command: streamlit run streamlit_app.py
+    depends_on:
+      - fastapi
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  data:
+    driver: local
