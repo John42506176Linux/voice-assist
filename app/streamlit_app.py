@@ -79,31 +79,26 @@ if unique_requests is not None and not unique_requests.empty:
         if not filtered_data.empty:
             st.write(f"### Conversation ID: {request_id}")
             
-            # Create columns for the chat layout
-            col1, col2 = st.columns(2)
-            
             # Display the conversation in a chat-like interface
             for _, row in filtered_data.iterrows():
                 if row["channel_index"] == 0:
-                    with col1:
-                        st.markdown(f"""
-                        <div style="text-align: left; padding: 10px; margin: 5px; background-color: #f0f0f5; border-radius: 10px; width: 100%;">
+                    st.markdown(f"""
+                    <div style="margin: 5px 50% 5px 0;">
+                        <div style="background-color: #f0f0f5; border-radius: 10px; padding: 10px;">
                             <b>Customer:</b> {row['transcript']}
                             <br><small>{row['created_at']}</small>
                         </div>
-                        """, unsafe_allow_html=True)
-                    with col2:
-                        st.write("")  # Empty space for alignment
+                    </div>
+                    """, unsafe_allow_html=True)
                 elif row["channel_index"] == 1:
-                    with col1:
-                        st.write("")  # Empty space for alignment
-                    with col2:
-                        st.markdown(f"""
-                        <div style="text-align: right; padding: 10px; margin: 5px; background-color: #e0ffe0; border-radius: 10px; width: 100%;">
+                    st.markdown(f"""
+                    <div style="margin: 5px 0 5px 50%; text-align: right;">
+                        <div style="background-color: #e0ffe0; border-radius: 10px; padding: 10px;">
                             <b>Agent:</b> {row['transcript']}
                             <br><small>{row['created_at']}</small>
                         </div>
-                        """, unsafe_allow_html=True)
+                    </div>
+                    """, unsafe_allow_html=True)
         else:
             st.write("No conversation found for the selected Request ID.")
 else:
