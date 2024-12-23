@@ -68,6 +68,12 @@ class TranscriptionData(BaseModel):
         if not all(isinstance(i, int) for i in v):
             raise ValueError("channel_index must contain only integers")
         return v
+@app.get("/health")
+async def health():
+    """
+    Health check endpoint to ensure the service is up and running.
+    """
+    return {"status": "ok"}
 
 @app.post("/")
 async def process_transcription(data: TranscriptionData):
@@ -100,6 +106,7 @@ async def process_transcription(data: TranscriptionData):
                 data.metadata.request_id,
                 transcript,
                 data.channel_index[0],
+                data.channel_index[1],
                 data.duration,
             ))
             conn.commit()
