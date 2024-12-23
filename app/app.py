@@ -101,7 +101,7 @@ async def process_transcription(data: TranscriptionData):
             cursor = conn.cursor()
             cursor.execute("""
                 INSERT OR REPLACE INTO transcriptions (request_id, transcript, channel_index, num_channels, duration)
-                VALUES (?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?)
             """, (
                 data.metadata.request_id,
                 transcript,
