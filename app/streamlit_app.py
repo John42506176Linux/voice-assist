@@ -37,7 +37,7 @@ if 'last_refresh' not in st.session_state:
 st.title("Chat Viewer: Customer-Agent Conversations")
 
 # Add refresh interval selector to sidebar
-refresh_interval = st.sidebar.slider("Set refresh interval (seconds)", 5, 60, 10)
+refresh_interval = st.sidebar.slider("Set refresh interval (seconds)", 0.1, 60, 10)
 
 # Add manual refresh button
 if st.sidebar.button("Refresh Now"):
