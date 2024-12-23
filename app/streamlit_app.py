@@ -3,6 +3,17 @@ import streamlit as st
 # Create a Streamlit connection object
 conn = st.connection('transcriptions_db', type='sql')
 
+# Initialize database schema if needed
+with conn.session as s:
+    s.execute("""
+        CREATE TABLE IF NOT EXISTS transcriptions (
+            request_id TEXT,
+            transcript TEXT,
+            channel_index INTEGER,
+            created_at TIMESTAMP
+        )
+    """)
+    s.commit()
 
 def get_transcriptions(request_id=None):
     """Retrieve transcription data from the SQLite database."""
@@ -11,10 +22,10 @@ def get_transcriptions(request_id=None):
             """
             SELECT request_id, transcript, channel_index, created_at
             FROM transcriptions
-            WHERE request_id = :request_id
+            WHERE request_id = ?
             ORDER BY created_at ASC
             """,
-            params={"request_id": request_id}
+            params=[request_id]
         )
     return conn.query(
         """
