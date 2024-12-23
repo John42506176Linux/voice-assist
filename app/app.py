@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field, validator
 from typing import List, Optional
 import sqlite3
 import os
+
 # Initialize FastAPI app
 app = FastAPI()
 
@@ -15,7 +16,8 @@ def init_db():
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS transcriptions (
-                request_id TEXT PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                request_id TEXT NOT NULL,
                 transcript TEXT,
                 channel_index INTEGER,
                 num_channels INTEGER,
@@ -68,6 +70,7 @@ class TranscriptionData(BaseModel):
         if not all(isinstance(i, int) for i in v):
             raise ValueError("channel_index must contain only integers")
         return v
+
 @app.get("/health")
 async def health():
     """
@@ -92,15 +95,15 @@ async def process_transcription(data: TranscriptionData):
         transcript = data.channel.alternatives[0].transcript
 
         if not transcript:
-            transcript = "No transcript available."
-            return {"message": transcript}
+            return {"message": "No transcript available."}
         if not data.speech_final:
             return {"message": "Speech is not finalized yet. Waiting for more data."}
+
         # Save to SQLite
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT OR REPLACE INTO transcriptions (request_id, transcript, channel_index, num_channels, duration)
+                INSERT INTO transcriptions (request_id, transcript, channel_index, num_channels, duration)
                 VALUES (?, ?, ?, ?, ?)
             """, (
                 data.metadata.request_id,
@@ -111,7 +114,6 @@ async def process_transcription(data: TranscriptionData):
             ))
             conn.commit()
     else:
-        transcript = "No transcript available."
-        return {"message": transcript}
+        return {"message": "No transcript available."}
 
     return {"message": "Transcription processed and saved to SQLite.", "transcript": transcript}
