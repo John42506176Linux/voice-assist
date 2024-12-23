@@ -56,7 +56,7 @@ def load_transcription_data():
 current_time = time.time()
 if current_time - st.session_state.last_refresh >= refresh_interval:
     st.session_state.last_refresh = current_time
-    st.experimental_rerun()
+    st.rerun()
 
 # Fetch unique requests
 unique_requests = load_transcription_data()
