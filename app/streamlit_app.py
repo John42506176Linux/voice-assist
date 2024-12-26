@@ -81,19 +81,19 @@ if unique_requests is not None and not unique_requests.empty:
             
             # Display the conversation in a chat-like interface
             for _, row in filtered_data.iterrows():
-                if row["channel_index"] == 0:
+                if row["channel_index"] == 0:  # Customer message
                     st.markdown(f"""
                     <div style="margin: 5px 50% 5px 0;">
-                        <div style="background-color: #f0f0f5; border-radius: 10px; padding: 10px;">
+                        <div style="background-color: #f0f0f5; border-radius: 10px; padding: 10px; color: black;">
                             <b>Customer:</b> {row['transcript']}
                             <br><small>{row['created_at']}</small>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
-                elif row["channel_index"] == 1:
+                elif row["channel_index"] == 1:  # Agent message
                     st.markdown(f"""
                     <div style="margin: 5px 0 5px 50%; text-align: right;">
-                        <div style="background-color: #e0ffe0; border-radius: 10px; padding: 10px;">
+                        <div style="background-color: #e0ffe0; border-radius: 10px; padding: 10px; color: black;">
                             <b>Agent:</b> {row['transcript']}
                             <br><small>{row['created_at']}</small>
                         </div>
@@ -101,6 +101,7 @@ if unique_requests is not None and not unique_requests.empty:
                     """, unsafe_allow_html=True)
         else:
             st.write("No conversation found for the selected Request ID.")
+
 else:
     st.write("No transcription data found in the database.")
 
